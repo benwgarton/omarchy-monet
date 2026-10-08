@@ -29,7 +29,7 @@ Monet itself also uses:
 
 | Needs | Why | How to get it |
 | --- | --- | --- |
-| `chromium` | Takes the page captures | Part of Omarchy, or `omarchy pkg add chromium` |
+| `chromium` | Takes the page captures | Part of Omarchy, or the Omarchy menu: Install > Package > chromium |
 | A default agent | Receives your notes and makes the changes | Setup > Defaults > Agent |
 
 You do not have to check any of this by hand. Each time the panel opens it

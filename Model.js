@@ -11,12 +11,12 @@ var DEPENDENCIES = [
   {
     command: "monet",
     label: "The Monet: Design Review app",
-    fix: "Install the monet package, then open this panel again."
+    fix: "Get it from iammonet.com/omarchy, then open this panel again."
   },
   {
     command: "jq",
     label: "jq, to find Monet's window",
-    fix: "Run: omarchy pkg add jq"
+    fix: "Install it from the Omarchy menu: Install > Package > jq."
   },
   {
     command: "hyprctl",
