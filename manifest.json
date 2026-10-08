@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "id": "com.iammonet.design-review",
+  "name": "Monet: Design Review",
+  "version": "1.1.0",
+  "author": "Monet",
+  "license": "MIT",
+  "homepage": "https://iammonet.com/omarchy",
+  "description": "Pick up the site you are building and review it in Monet: capture it, mark it up, and hand the notes to your agent.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Panel.qml"
+  },
+  "barWidget": {
+    "displayName": "Monet",
+    "description": "Review the site you are building, from the bar.",
+    "category": "Developer Tools",
+    "aliases": [
+      "monet",
+      "design-review"
+    ],
+    "allowMultiple": false,
+    "defaultSection": "right"
+  },
+  "dependencies": {
+    "omarchy": ">=4.0",
+    "commands": [
+      {
+        "name": "monet",
+        "required": true,
+        "provides": "The Monet: Design Review app (package: monet)."
+      },
+      {
+        "name": "jq",
+        "required": true,
+        "provides": "Part of Omarchy. Used to find Monet's window."
+      },
+      {
+        "name": "hyprctl",
+        "required": true,
+        "provides": "Part of Omarchy (Hyprland). Used to bring Monet's window forward."
+      },
+      {
+        "name": "chromium",
+        "required": false,
+        "provides": "Part of Omarchy. Monet uses it to capture pages."
+      },
+      {
+        "name": "omarchy-capture-screenshot",
+        "required": false,
+        "provides": "Part of Omarchy. Used to pick a window or an area of the screen to review."
+      },
+      {
+        "name": "omarchy",
+        "required": false,
+        "provides": "A default agent (Setup > Defaults > Agent) lets Monet send it your notes."
+      }
+    ]
+  }
+}

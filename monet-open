@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Opens Monet: Design Review, or brings its window forward. Arguments go to
+# `monet` as they are, for example:
+#
+#   monet-open --review-url http://localhost:5173/ --review-dir ~/Work/site
+#
+# Monet keeps a single window. Starting it again hands the arguments to the
+# window that is already open, so this works whether or not Monet is running.
+#
+#   monet-open --pick-screen
+#
+# first lets you click a window or drag over an area with Omarchy's own
+# screenshot picker, then opens Monet with that picture.
+# Needs: monet, hyprctl, jq. --pick-screen also needs omarchy-capture-screenshot.
+
+window_address() {
+  hyprctl clients -j 2>/dev/null |
+    jq -r '[.[] | select(.class == "monet")][0].address // empty' 2>/dev/null
+}
+
+focus_window() {
+  hyprctl dispatch "hl.dsp.focus({ window = \"address:$1\" })" >/dev/null 2>&1 ||
+    hyprctl dispatch focuswindow "address:$1" >/dev/null 2>&1
+}
+
+if ! command -v monet >/dev/null 2>&1; then
+  echo "monet-open: the monet command is not installed" >&2
+  exit 127
+fi
+
+if [[ ${1:-} == "--pick-screen" ]]; then
+  shift
+  if ! command -v omarchy-capture-screenshot >/dev/null 2>&1; then
+    echo "monet-open: Omarchy's screenshot picker is not installed" >&2
+    exit 127
+  fi
+  # Let the bar panel finish closing, so it is not in the picture.
+  sleep 0.3
+  picture=$(omarchy-capture-screenshot smart save 2>/dev/null | tail -n 1)
+  # Esc in the picker: nothing was chosen, so there is nothing to open.
+  [[ -n $picture && -f $picture ]] || exit 0
+  set -- --review-picture "$picture" "$@"
+fi
+
+address=$(window_address)
+
+# Nothing to hand over and a window is already open: only bring it forward.
+if (($# == 0)) && [[ -n $address ]]; then
+  focus_window "$address"
+  exit 0
+fi
+
+# Started the way Omarchy starts apps, so Monet outlives the shell that
+# launched it and lands in its own session scope.
+if command -v uwsm-app >/dev/null 2>&1; then
+  setsid uwsm-app -- monet "$@" >/dev/null 2>&1 &
+else
+  setsid monet "$@" >/dev/null 2>&1 &
+fi
+
+# A Wayland app cannot raise its own window, so wait for it and ask Hyprland.
+# A cold start on an old laptop can take several seconds.
+for _ in {1..80}; do
+  address=$(window_address)
+  if [[ -n $address ]]; then
+    focus_window "$address"
+    exit 0
+  fi
+  sleep 0.25
+done
+
+exit 0
